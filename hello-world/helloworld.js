@@ -14,17 +14,24 @@ class HelloWorld extends HTMLElement {
     return['name'];
   }
 
+  // Custom method centralizing textContent modifications
+  setTextContent() {
+    this.textContent = `Hello ${this.name}`;
+  }
+
   // Callback called when an attribute is set in tag or changed
   attributeChangedCallback(property, oldValue, newValue) {
     if(oldValue !== newValue) {
       this[property] = newValue;
+      // Updating the component
+      this.setTextContent();
     }
   }
 
 
   // Invoked when each element is added to a document
   connectedCallback() {
-    this.textContent = `Hello ${this.name}`;
+    this.setTextContent();
   }
 }
 

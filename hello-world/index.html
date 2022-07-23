@@ -5,10 +5,17 @@
     <link rel="stylesheet" href="helloworld.css"> 
   </head>
   <body>
-    <h1>Web component with an attribute</h1>
-    <pre>&#60;hello-world&#62;&#60;/hello-world&#62;</pre>
-    <hello-world></hello-world>
-    <pre>&#60;hello-world name="API Handyman"&#62;&#60;/hello-world&#62;</pre>
-    <hello-world name="API Handyman"></hello-world>
+    <h1>Changing web component's attribute value</h1>
+    <div>
+      <h2>HTML</h2>
+      <pre>&#60;hello-world name="Someone"&#62;&#60;/hello-world&#62;</pre>
+      <h2>Javascript</h2>
+      <pre>document.querySelector('hello-world').setAttribute('name','Everyone');</pre>
+    </div>
+    <div>
+      <h2>Web component</h2>
+      <div><hello-world name="Someone"></hello-world></div>
+      <div><button onclick="console.log('click');document.querySelector('hello-world').setAttribute('name','Everyone');">Change name to "Everyone"</button></div>
+    </div>
   </body>
 </html>
