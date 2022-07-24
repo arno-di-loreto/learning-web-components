@@ -3,9 +3,9 @@
 /test/
 custom-elements.json
 # top level source
-my-element.js
-my-element.js.map
-my-element.d.ts
-my-element.d.ts.map
+hello-world-lit.js
+hello-world-lit.js.map
+hello-world-lit.d.ts
+hello-world-lit.d.ts.map
 # only generated for size check
-my-element.bundled.js
+hello-world-lit.bundled.js
