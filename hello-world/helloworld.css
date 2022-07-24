@@ -1,3 +1,5 @@
+/* This css does not work anymore
+now <hello-world> uses a closed shadow DOM */
 hello-world p {
   font-weight: bold;
   font-size: 2rem;

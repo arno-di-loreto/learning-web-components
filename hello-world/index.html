@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="helloworld.css"> 
   </head>
   <body>
-    <h1>Using innerHTML in web component and styling it</h1>
+    <h1>Using closed shadow DOM in web component and styling it with inner CSS</h1>
     <div>
       <h2>HTML</h2>
       <pre id="source"></pre>
@@ -27,9 +27,6 @@
         console.log(element);
         source.textContent +=  element.innerHTML +"\n";
       };
-      //console.log(componentHtml);
-      //const source = document.getElementById('source');
-      //source.textContent =  componentHtml ;
     </script>
   </body>
 </html>
