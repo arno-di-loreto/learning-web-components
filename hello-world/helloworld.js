@@ -14,9 +14,11 @@ class HelloWorld extends HTMLElement {
     return['name'];
   }
 
-  // Custom method centralizing textContent modifications
-  setTextContent() {
-    this.textContent = `Hello ${this.name}`;
+  // Custom method centralizing UI modifications
+  _render() {
+    this.innerHTML = `
+      <div><h5>Greetings message</h5><p>Hello ${this.name}</p></div>
+    `;
   }
 
   // Callback called when an attribute is set in tag or changed
@@ -24,14 +26,14 @@ class HelloWorld extends HTMLElement {
     if(oldValue !== newValue) {
       this[property] = newValue;
       // Updating the component
-      this.setTextContent();
+      this._render();
     }
   }
 
 
   // Invoked when each element is added to a document
   connectedCallback() {
-    this.setTextContent();
+    this._render();
   }
 }
 

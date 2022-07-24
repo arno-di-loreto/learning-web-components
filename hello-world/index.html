@@ -5,17 +5,31 @@
     <link rel="stylesheet" href="helloworld.css"> 
   </head>
   <body>
-    <h1>Changing web component's attribute value</h1>
+    <h1>Using innerHTML in web component and styling it</h1>
     <div>
       <h2>HTML</h2>
-      <pre>&#60;hello-world name="Someone"&#62;&#60;/hello-world&#62;</pre>
+      <pre id="source"></pre>
       <h2>Javascript</h2>
       <pre>document.querySelector('hello-world').setAttribute('name','Everyone');</pre>
     </div>
     <div>
       <h2>Web component</h2>
-      <div><hello-world name="Someone"></hello-world></div>
-      <div><button onclick="console.log('click');document.querySelector('hello-world').setAttribute('name','Everyone');">Change name to "Everyone"</button></div>
+      <div class="to_source"><hello-world name="Someone"></hello-world></div>
+      <div class="to_source"><button onclick="document.querySelector('hello-world').setAttribute('name','Everyone');">Change name to "Everyone" from button outside of component</button></div>
     </div>
+    <script>
+      // why bother manually putting html code in pre node when you can copy/paste it with javascript
+      //const componentHtml = document.getElementById('webcomponent').innerHTML.trim();
+      const elements = document.getElementsByClassName('to_source');
+      console.log(elements);
+      const target = document.getElementById('source')
+      for(let element of elements) {
+        console.log(element);
+        source.textContent +=  element.innerHTML +"\n";
+      };
+      //console.log(componentHtml);
+      //const source = document.getElementById('source');
+      //source.textContent =  componentHtml ;
+    </script>
   </body>
 </html>

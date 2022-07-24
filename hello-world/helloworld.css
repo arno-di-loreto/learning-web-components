@@ -1,4 +1,11 @@
-hello-world {
+hello-world p {
   font-weight: bold;
-  color: pink;
+  font-size: 2rem;
+  color: blue;
+  text-align: center;
+  font-weight: normal;
+  padding: 1rem;
+  margin: 0 0 2rem 0;
+  background-color: #eee;
+  border: 1px solid #666;
 }
