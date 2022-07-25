@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Code block web component</title>
+    <script type="module" src="code-block.js"></script>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h1>Code block web component</h1>
+    Not yet powered by Prism
+    <div>
+      <h2>HTML</h2>
+      <pre id="source"></pre>
+    </div>
+    <div>
+      <h2>Web component</h2>
+      <div class="to_source">
+<code-block>{
+  "example": "value",
+  "another": "value"
+}</code-block>
+      </div>
+    <script>
+      // why bother manually putting html code in pre node when you can copy/paste it with javascript
+      //const componentHtml = document.getElementById('webcomponent').innerHTML.trim();
+      const elements = document.getElementsByClassName('to_source');
+      const target = document.getElementById('source')
+      for(let element of elements) {
+        source.textContent +=  element.innerHTML +"\n";
+      };
+    </script>
+  </body>
+</html>
