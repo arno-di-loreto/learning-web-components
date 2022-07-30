@@ -118,6 +118,10 @@ class CodeBlock extends HTMLElement {
 
   // HTML
 
+  _sanitizeContent(content) {
+    return content.replaceAll('<','&lt;').replaceAll('>','&lt;');
+  }
+
   _getSeparatorHTML(){
     // SVG copy/pasted from github UI
     return `
@@ -150,7 +154,7 @@ class CodeBlock extends HTMLElement {
         codeBlocksHTML += this._getSeparatorHTML();
       }
       codeBlocksHTML += `
-        <pre><code>${content}</code></pre>
+        <pre><code>${this._sanitizeContent(content)}</code></pre>
       `;
       // More blocks coming OR last block which is not the end of code
       if( index < blocks.length-1 || selectedLines[selectedLines.length-1].number < this.originalLines[this.originalLines.length - 1].number){
