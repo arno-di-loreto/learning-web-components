@@ -138,6 +138,8 @@ class CodeBlock extends HTMLElement {
   connectedCallback() {
     console.log('connectedCallback');
     this._setOriginalLines();
+    const headerHTML = '';
+    /*
     const headerHTML = `
     <h5>Code block</h5>
     <dl>
@@ -145,8 +147,8 @@ class CodeBlock extends HTMLElement {
       <dd>${this._getRangesAsText(this.ranges)}</dd>
       <dt>Original Line count</dt>
       <dd>${this.originalLines.length}</dd>
-    </dl>`;
-    let codeBlocksHTML = '';
+    </dl>`;*/
+    let codeBlocksHTML = '<div class="code-block-container">';
     this._getSelectedLinesBlocks().forEach((selectedLines, index, blocks) => {
       const content = this._getLinesAsText(selectedLines);
       console.log('index', index, 'first line number', selectedLines[0].number);
@@ -161,6 +163,7 @@ class CodeBlock extends HTMLElement {
         codeBlocksHTML += this._getSeparatorHTML();
       }
     });
+    codeBlocksHTML += '</div>';
     this.innerHTML = `
     ${headerHTML}
     ${codeBlocksHTML}
