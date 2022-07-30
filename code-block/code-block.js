@@ -1,12 +1,7 @@
 
 class CodeBlock extends HTMLElement {
 
-  _getStats() {
-    const lineCount =  lines.length;
-    return {
-      lineCount: lineCount
-    }
-  }
+  // Kind of setters, there's a better way to do this with get/set keywords I think
 
   _setOriginalLines() {
     let content = this.innerHTML; //this.innerText don't preserve indentation and newlines
@@ -21,14 +16,55 @@ class CodeBlock extends HTMLElement {
     })
   }
 
+  // An array of line blocks (hence an array of array of lines)
+  _getSelectedLinesBlocks() {
+    let selectedLinesBlocks;
+    console.log('_getSelectedLinesBlocks', 'this.ranges', this.ranges)
+    if(this.ranges) {
+      this.ranges.forEach(range => {
+        selectedLinesBlocks = this._getLinesBlocksInRanges(this.originalLines, this.ranges);
+      });
+    }
+    else {
+      selectedLinesBlocks = [this.originalLines];
+    }
+    return selectedLinesBlocks; 
+  }
+
+  _setRanges(textRanges) {
+    // Will need to check format
+    // Will need to check numbers are ok, refine option, sort option? allow range not in right order?
+    // Prototype of full regex \s*\d+(\s*-\s*\d+)?\s*(\s*,\s*\d+(\s*-\s*\d+)?\s*)*
+    const splitTextRanges = textRanges.split(/\s*,\s*/g); // Lazy format handling white space, will add it for individual ranges
+    const tmpRanges = [];
+    splitTextRanges.forEach(textRange => {
+      const range = this._getRangeNumbers(textRange);
+      tmpRanges.push(range);
+    });
+    this.ranges = tmpRanges;
+    console.log('_setRanges', this.ranges);
+  }
+
+  // Generic functions
+
   _getLinesInRange(lines, startLineNumber, endLineNumber) {
     const selectedLines = [];
+    // Could probably use a filter here?
     lines.forEach(line => {
       if(line.number >= startLineNumber && line.number <= endLineNumber) {
         selectedLines.push(line);
       }
     });
     return selectedLines;
+  }
+  // An array of line blocks (hence an array of array of lines)
+  _getLinesBlocksInRanges(lines, ranges) {
+    const linesBlocks = [];
+    ranges.forEach(range => {
+      const rangeLines = this._getLinesInRange(lines, range.start, range.end);
+      linesBlocks.push(rangeLines);
+    });
+    return linesBlocks;
   }
 
   _getLinesAsText(lines) {
@@ -58,49 +94,94 @@ class CodeBlock extends HTMLElement {
     }
   }
 
+  _getRangeAsText(range) {
+    let textRange = range.start;
+    if(range.start != range.end){
+      textRange += `-${range.end}`;
+    }
+    return textRange;
+  }
+
+  _getRangesAsText(ranges) {
+    console.log('_getRangesAsText', ranges);
+    let textRanges = '';
+    if(ranges) {
+      ranges.forEach( (range, index, ranges) => {
+        textRanges += this._getRangeAsText(range);
+        if(ranges.length > 1 && index < ranges.length-1) {
+          textRanges += ',';
+        }
+      });
+    }
+    return textRanges;
+  }
+
+  // HTML
+
+  _getSeparatorHTML(){
+    // SVG copy/pasted from github UI
+    return `
+      <div class="separator">
+        <svg class="separator-indicator" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true">
+          <path d="M8 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM1.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm13 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
+        </svg>
+      </div>
+    `;
+  }
+
+  // Web components functions
+
   connectedCallback() {
     console.log('connectedCallback');
     this._setOriginalLines();
-    let selectedLines;
-    if(this.range) {
-      const rangeNumbers = this._getRangeNumbers(this.range);
-      selectedLines = this._getLinesInRange(this.originalLines, rangeNumbers.start, rangeNumbers.end);
-    }
-    else {
-      selectedLines = this.originalLines;
-    }
-    const content = this._getLinesAsText(selectedLines);
-    this.innerHTML = `
+    const headerHTML = `
     <h5>Code block</h5>
     <dl>
-      <dt>Range</dt>
-      <dd>${this.range}</dd>
+      <dt>Ranges</dt>
+      <dd>${this._getRangesAsText(this.ranges)}</dd>
       <dt>Original Line count</dt>
       <dd>${this.originalLines.length}</dd>
-      <dt>Selected Line count</dt>
-      <dd>${selectedLines.length}</dd>
-      <dt>First line number / Last line number</dt>
-      <dd>${selectedLines[0].number}/${selectedLines[selectedLines.length-1].number}</dd>
-
-    </dl>
-    <pre><code>${content}</code></pre>`;
+    </dl>`;
+    let codeBlocksHTML = '';
+    this._getSelectedLinesBlocks().forEach((selectedLines, index, blocks) => {
+      const content = this._getLinesAsText(selectedLines);
+      console.log('index', index, 'first line number', selectedLines[0].number);
+      if(index === 0 && selectedLines[0].number > 1){
+        codeBlocksHTML += this._getSeparatorHTML();
+      }
+      codeBlocksHTML += `
+        <pre><code>${content}</code></pre>
+      `;
+      // More blocks coming OR last block which is not the end of code
+      if( index < blocks.length-1 || selectedLines[selectedLines.length-1].number < this.originalLines[this.originalLines.length - 1].number){
+        codeBlocksHTML += this._getSeparatorHTML();
+      }
+    });
+    this.innerHTML = `
+    ${headerHTML}
+    ${codeBlocksHTML}
+    `;
   }
 
   // The attributes of the web component
   // Hence <hello-world attribute1="" attribute2="">
   static get observedAttributes() {
-    return['range'];
+    return['ranges'];
   }
 
   // Callback called when an attribute is set in tag or changed
   attributeChangedCallback(property, oldValue, newValue) {
     console.log('attributeChangedCallback', property, oldValue, newValue);
-    if(oldValue !== newValue) {
-      this[property] = newValue;
-    }
+    //if(oldValue !== newValue) {
+      if(property === 'ranges'){
+        this._setRanges(newValue);
+      }
+      else {
+        this[property] = newValue;
+      }
+    //}
   }
 
 }
-
 
 customElements.define('code-block', CodeBlock);
