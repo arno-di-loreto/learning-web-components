@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Code block web component</title>
+    <title>&lt;code-block&gt; Web Component Demo</title>
     <script type="module" src="code-block.js"></script>
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <h1>Code block web component</h1>
-    Not yet powered by Prism
-    <div>
-      <h2>HTML</h2>
-      <pre id="source"></pre>
-    </div>
-    <div>
-      <h2>Web component</h2>
-      <div class="to_source">
+    <h1><code>&lt;code-block&gt;</code> Web Component Demo</h1>
 <code-block>{
   "example": "value",
   "another": "value"
@@ -78,15 +70,17 @@ if(message) {
 // Show a red message in response tab
 throw new Error(message);
 }</code-block>
-      </div>
     <script>
       // why bother manually putting html code in pre node when you can copy/paste it with javascript
-      //const componentHtml = document.getElementById('webcomponent').innerHTML.trim();
-      const elements = document.getElementsByClassName('to_source');
-      const target = document.getElementById('source')
-      for(let element of elements) {
-        source.textContent +=  element.innerHTML +"\n";
-      };
+      const webComponentTag = 'code-block';
+      const webComponents = document.getElementsByTagName(webComponentTag);
+      for( let webComponent of webComponents){
+        const code = document.createElement('pre');
+        const codeContent = document.createTextNode(webComponent.outerHTML);
+        const title = 
+        code.appendChild(codeContent);
+        webComponent.parentNode.insertBefore(code, webComponent);
+      }
     </script>
   </body>
 </html>

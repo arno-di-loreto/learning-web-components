@@ -1,3 +1,7 @@
+body > pre {
+  background-color: lightblue;
+}
+
 code-block .code-block-container {
   border: 1px solid rgb(210, 211, 215);
   background-color: rgb(248, 249, 250);
