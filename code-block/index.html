@@ -19,6 +19,57 @@
   "example": "value",
   "another": "value"
 }</code-block>
+<code-block range="2">{
+  "example": "value",
+  "another": "value"
+}</code-block>
+<code-block range="10-15">/*************************************/
+/* Checks an environment is selected */
+/* and contains the variables needed */
+/* to run the collection             */
+/*************************************/
+
+// The expected variable names and their default values are stored as csv lists
+// in the expected_environment_variables and 
+// expected_environment_variables_defaults collection variable.
+const expectedEnvironmentVariableNames = pm.collectionVariables.get("expected_environment_variables").split(",");
+const expectedEnvironmentVariableDefaults = pm.collectionVariables.get("expected_environment_variables_defaults").split(",");
+const expectedEnvironmentVariables = []
+for(let i=0;i<expectedEnvironmentVariableNames.length;i++){
+let defaultValue = undefined;
+if(expectedEnvironmentVariableDefaults[i].length > 0){
+  defaultValue = expectedEnvironmentVariableDefaults[i];
+}
+expectedEnvironmentVariables.push({
+  name: expectedEnvironmentVariableNames[i],
+  defaultValue: defaultValue
+})
+}
+
+// The message indicating the problem
+let message;
+// Get selected environment name (undefined if none is selected)
+const selectedEnvironment = pm.environment.name;
+if(selectedEnvironment === undefined) {
+message = `No environment containing the ${expectedEnvironmentVariableNames} variable(s) has been selected`;
+}
+else {
+// Checking expected variables are all defined and not set to default value if any
+expectedEnvironmentVariables.forEach(variable => {
+    const variableValue = pm.environment.get(variable.name);
+    if(variableValue === undefined) {
+        message = `Selected environment (${selectedEnvironment}) does not contain the ${variable.name} variable`;
+    }
+    else if (variable.defaultValue !== undefined && variableValue === variable.defaultValue) {
+        message = `Selected environment (${selectedEnvironment}) contains the ${variable.name} variable but it's set to its default value ${variable.defaultValue}`;
+    }
+});
+}
+
+if(message) {
+// Show a red message in response tab
+throw new Error(message);
+}</code-block>
       </div>
     <script>
       // why bother manually putting html code in pre node when you can copy/paste it with javascript
