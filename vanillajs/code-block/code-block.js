@@ -3,7 +3,54 @@ class CodeBlock extends HTMLElement {
 
   constructor() {
     super();
-    //this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: 'open' });
+  }
+
+  _getCss() {
+    // Warning: color set here so maybe outside css won't be able to modify
+    return `
+    :host .code-block-container {
+      border: 1px solid rgb(210, 211, 215);
+      background-color: rgb(248, 249, 250);
+      width: fit-content;
+      min-width: 100%;
+      margin-bottom: 1rem;
+      color: dimGrey;
+    }
+    
+    :host pre {
+      margin: 0;
+      width: fit-content;
+      min-width: 100%;
+      padding: 0.5rem;
+    }
+    
+    :host .separator {
+      min-width: 100%;
+      height: 1rem;
+      background: #EAEAEA;
+      /*border-left: 1px solid lightblue;
+      border-right: 1px solid lightblue;*/
+    }
+    
+    :host .separator:first-child {
+      border-bottom: 1px dashed #AAAAAA;
+    }
+    
+    :host .separator:last-child {
+      border-top: 1px dashed #AAAAAA;
+    }
+    
+    :host .separator:not(:first-child):not(:last-child) {
+      border-top: 1px dashed #AAAAAA;
+      border-bottom: 1px dashed #AAAAAA;
+    }
+    
+    :host .separator-indicator {
+      display: block;
+      margin:auto;
+    }
+    `;
   }
 
   // Kind of setters, there's a better way to do this with get/set keywords I think
@@ -169,8 +216,12 @@ class CodeBlock extends HTMLElement {
       }
     });
     codeBlocksHTML += '</div>';
-    console.log('codeBlocksHTML',codeBlocksHTML);
-    this.innerHTML = codeBlocksHTML;
+    this.shadowRoot.innerHTML = `
+      <style>
+      ${this._getCss()}
+      </style>
+      ${codeBlocksHTML}
+    `;
   }
 
   // Web components functions
