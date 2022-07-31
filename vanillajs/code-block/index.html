@@ -7,6 +7,7 @@
   </head>
   <body>
     <h1><code>&lt;code-block&gt;</code> Web Component Demo</h1>
+    <h2>Inline code</h2>
 <code-block>{
   "example": "value",
   "another": "value"
@@ -70,6 +71,10 @@ if(message) {
 // Show a red message in response tab
 throw new Error(message);
 }</code-block>
+  <h2>Remote code</h2>
+  <code-block src="https://apihandyman.io/code/what-is-the-info-property-in-openapi/complete-license-url-version-31.openapi.yaml"></code-block>
+  <code-block ranges="2,8-11" src="https://apihandyman.io/code/what-is-the-info-property-in-openapi/complete-license-url-version-31.openapi.yaml"></code-block>
+  <code-block ranges="12-14" src="https://apihandyman.io/code/what-is-the-info-property-in-openapi/complete-license-url-version-31.openapi.yaml"></code-block>
     <script>
       // why bother manually putting html code in pre node when you can copy/paste it with javascript
       const webComponentTag = 'code-block';

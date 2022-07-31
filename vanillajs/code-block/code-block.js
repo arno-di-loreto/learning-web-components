@@ -1,11 +1,15 @@
 
 class CodeBlock extends HTMLElement {
 
+  constructor() {
+    super();
+    //this.attachShadow({ mode: 'open' });
+  }
+
   // Kind of setters, there's a better way to do this with get/set keywords I think
 
   _setOriginalLines() {
-    let content = this.innerHTML; //this.innerText don't preserve indentation and newlines
-    let lines = content.split(/^/gm);
+    let lines = this.content.split(/^/gm);
     this.originalLines = [];
     let lineNumber = 0;
     lines.forEach(line => {
@@ -14,12 +18,12 @@ class CodeBlock extends HTMLElement {
         value: line
       })
     })
+    console.log('_setOriginalLines', this.originalLines.length);
   }
 
   // An array of line blocks (hence an array of array of lines)
   _getSelectedLinesBlocks() {
     let selectedLinesBlocks;
-    console.log('_getSelectedLinesBlocks', 'this.ranges', this.ranges)
     if(this.ranges) {
       this.ranges.forEach(range => {
         selectedLinesBlocks = this._getLinesBlocksInRanges(this.originalLines, this.ranges);
@@ -42,7 +46,6 @@ class CodeBlock extends HTMLElement {
       tmpRanges.push(range);
     });
     this.ranges = tmpRanges;
-    console.log('_setRanges', this.ranges);
   }
 
   // Generic functions
@@ -103,7 +106,6 @@ class CodeBlock extends HTMLElement {
   }
 
   _getRangesAsText(ranges) {
-    console.log('_getRangesAsText', ranges);
     let textRanges = '';
     if(ranges) {
       ranges.forEach( (range, index, ranges) => {
@@ -133,21 +135,24 @@ class CodeBlock extends HTMLElement {
     `;
   }
 
-  // Web components functions
+  _setContentAndRender() {
+    if(this.src) {
+      console.log('content from url', this.src);
+      fetch(this.src).then((response)=>{response.text().then((text)=>{
+        this.content = text;
+        this._setOriginalLines();
+        this._render();
+      })});
+    }
+    else {
+      console.log('inline content');
+      this.content = this.innerHTML; //this.innerText don't preserve indentation and newlines
+      this._setOriginalLines();
+      this._render(); 
+    }
+  }
 
-  connectedCallback() {
-    console.log('connectedCallback');
-    this._setOriginalLines();
-    const headerHTML = '';
-    /*
-    const headerHTML = `
-    <h5>Code block</h5>
-    <dl>
-      <dt>Ranges</dt>
-      <dd>${this._getRangesAsText(this.ranges)}</dd>
-      <dt>Original Line count</dt>
-      <dd>${this.originalLines.length}</dd>
-    </dl>`;*/
+  _render() {
     let codeBlocksHTML = '<div class="code-block-container">';
     this._getSelectedLinesBlocks().forEach((selectedLines, index, blocks) => {
       const content = this._getLinesAsText(selectedLines);
@@ -164,16 +169,21 @@ class CodeBlock extends HTMLElement {
       }
     });
     codeBlocksHTML += '</div>';
-    this.innerHTML = `
-    ${headerHTML}
-    ${codeBlocksHTML}
-    `;
+    console.log('codeBlocksHTML',codeBlocksHTML);
+    this.innerHTML = codeBlocksHTML;
+  }
+
+  // Web components functions
+
+  connectedCallback() {
+    console.log('connectedCallback');
+    this._setContentAndRender();    
   }
 
   // The attributes of the web component
   // Hence <hello-world attribute1="" attribute2="">
   static get observedAttributes() {
-    return['ranges'];
+    return['ranges', 'src' ];
   }
 
   // Callback called when an attribute is set in tag or changed
